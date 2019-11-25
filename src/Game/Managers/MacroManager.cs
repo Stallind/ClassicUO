@@ -1215,18 +1215,40 @@ namespace ClassicUO.Game.Managers
                     switch (macro.SubCode)
                     {
                         case MacroSubType.Add:
-                            if (World.Party.Leader == 0 || World.Party.Leader == World.Player) GameActions.RequestPartyInviteByTarget();
+                            if (World.Party.Leader == 0 || World.Party.Leader == World.Player)
+                            { 
+                                GameActions.RequestPartyInviteByTarget(); 
+                            }
                             else Chat.HandleMessage(null, "You are not the party leader.", "System", Hue.INVALID, MessageType.Regular, 3);
                             break;
 
                         case MacroSubType.Accept:
-                            GameActions.RequestPartyAccept(World.Party.Inviter);
-                            World.Party.Leader = World.Party.Inviter;
-                            World.Party.Inviter = 0;
+                            if (World.Party.Inviter != 0)
+                            {
+                                GameActions.RequestPartyAccept(World.Party.Inviter);
+                                World.Party.Leader = World.Party.Inviter;
+                                World.Party.Inviter = 0;
+                            }
+                            else Chat.HandleMessage(null, "No one has invited you to be in a party.", "System", Hue.INVALID, MessageType.Regular, 3);
                             break;
 
                         case MacroSubType.Quit:
-                            GameActions.RequestPartyQuit();
+                            if (World.Party.Leader != 0)
+                            {
+                                GameActions.RequestPartyQuit();
+                                World.Party.Leader = 0;
+                            }
+                            else Chat.HandleMessage(null, "You are not in a party.", "System", Hue.INVALID, MessageType.Regular, 3);
+                            break;
+
+                        case MacroSubType.Decline:
+                            if (World.Party.Inviter != 0)
+                            {
+                                NetClient.Socket.Send(new PPartyDecline(World.Party.Inviter));
+                                World.Party.Leader = 0;
+                                World.Party.Inviter = 0;
+                            }
+                            else Chat.HandleMessage(null, "There's no party invite to decline.", "System", Hue.INVALID, MessageType.Regular, 3);
                             break;
                     }
                     break;
@@ -1421,7 +1443,7 @@ namespace ClassicUO.Game.Managers
 
                 case MacroType.PartyAction:
                     offset = (int)MacroSubType.Add;
-                    count = 3;
+                    count = 4;
                     break;
             }
         }
@@ -1813,6 +1835,7 @@ namespace ClassicUO.Game.Managers
         Add,
         Accept,
         Quit,
+        Decline,
 
 
         ConfusionBlastPotion,
