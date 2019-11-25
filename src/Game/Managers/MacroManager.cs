@@ -1210,6 +1210,26 @@ namespace ClassicUO.Game.Managers
                         }
                     }
                     break;
+
+                case MacroType.PartyAction:
+                    switch (macro.SubCode)
+                    {
+                        case MacroSubType.Add:
+                            if (World.Party.Leader == 0 || World.Party.Leader == World.Player) GameActions.RequestPartyInviteByTarget();
+                            else Chat.HandleMessage(null, "You are not the party leader.", "System", Hue.INVALID, MessageType.Regular, 3);
+                            break;
+
+                        case MacroSubType.Accept:
+                            GameActions.RequestPartyAccept(World.Party.Inviter);
+                            World.Party.Leader = World.Party.Inviter;
+                            World.Party.Inviter = 0;
+                            break;
+
+                        case MacroSubType.Quit:
+                            GameActions.RequestPartyQuit();
+                            break;
+                    }
+                    break;
             }
 
 
@@ -1398,6 +1418,11 @@ namespace ClassicUO.Game.Managers
                     offset = (int) MacroSubType.ConfusionBlastPotion;
                     count = MacroSubType.ExplosionPotion - MacroSubType.ConfusionBlastPotion;
                     break;
+
+                case MacroType.PartyAction:
+                    offset = (int)MacroSubType.Add;
+                    count = 3;
+                    break;
             }
         }
     }
@@ -1427,6 +1452,7 @@ namespace ClassicUO.Game.Managers
                 case MacroType.SelectNearest:
                 case MacroType.MovePlayer:
                 case MacroType.UsePotion:
+                case MacroType.PartyAction:
 
                     if (sub == MacroSubType.MSC_NONE)
                     {
@@ -1562,6 +1588,7 @@ namespace ClassicUO.Game.Managers
         UsePotion,
         CloseAllHealthBars,
         RazorMacro,
+        PartyAction,
 
     }
 
@@ -1783,6 +1810,9 @@ namespace ClassicUO.Game.Managers
         Right,
         Down,
         Left,
+        Add,
+        Accept,
+        Quit,
 
 
         ConfusionBlastPotion,
