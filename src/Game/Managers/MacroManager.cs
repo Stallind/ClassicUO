@@ -1245,7 +1245,6 @@ namespace ClassicUO.Game.Managers
                             if (World.Party.Inviter != 0)
                             {
                                 NetClient.Socket.Send(new PPartyDecline(World.Party.Inviter));
-                                World.Party.Leader = 0;
                                 World.Party.Inviter = 0;
                             }
                             else Chat.HandleMessage(null, "There's no party invite to decline.", "System", Hue.INVALID, MessageType.Regular, 3);
