@@ -1831,11 +1831,6 @@ namespace ClassicUO.Game.Managers
         Right,
         Down,
         Left,
-        Add,
-        Accept,
-        Quit,
-        Decline,
-
 
         ConfusionBlastPotion,
         CurePotion,
@@ -1845,5 +1840,9 @@ namespace ClassicUO.Game.Managers
         RefreshPotion,
         HealPotion,
         ExplosionPotion,
+        Add,
+        Accept,
+        Quit,
+        Decline,
     }
 }
