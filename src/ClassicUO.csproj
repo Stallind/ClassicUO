@@ -131,14 +131,14 @@
     <Compile Include="Game\Data\RaceType.cs" />
     <Compile Include="Game\Data\Seasons.cs" />
     <Compile Include="Game\Data\ServerErrorMessages.cs" />
-    <Compile Include="Game\Data\SpellsBardic.cs" />
+    <Compile Include="Game\Data\SpellsMastery.cs" />
     <Compile Include="Game\Data\SpellsBushido.cs" />
     <Compile Include="Game\Data\SpellsChivalry.cs" />
     <Compile Include="Game\Data\SpellsMysticism.cs" />
     <Compile Include="Game\Data\SpellsNecromancy.cs" />
     <Compile Include="Game\Data\SpellsNinjitsu.cs" />
     <Compile Include="Game\Data\SpellsSpellweaving.cs" />
-    <Compile Include="Game\Data\StaticFilters.cs" />
+    <Compile Include="Game\Data\StaticsHelper.cs" />
     <Compile Include="Game\GameObjects\DragEffect.cs" />
     <Compile Include="Game\GameObjects\Land.cs" />
     <Compile Include="Game\GameObjects\EntityTextContainer.cs" />
@@ -158,6 +158,7 @@
     <Compile Include="Game\Managers\PoolsManager.cs" />
     <Compile Include="Game\Managers\SkillsGroupManager.cs" />
     <Compile Include="Game\Managers\WorldMapEntityManager.cs" />
+    <Compile Include="Game\Scenes\SceneID.cs" />
     <Compile Include="Game\SelectedObject.cs" />
     <Compile Include="Game\UI\AbstractEntry.cs" />
     <Compile Include="Game\UI\Controls\AbstractTextBox.cs" />
@@ -436,7 +437,6 @@
     <Compile Include="Game\Scenes\GameScene.cs" />
     <Compile Include="Game\Scenes\LoginScene.cs" />
     <Compile Include="Game\Scenes\Scene.cs" />
-    <Compile Include="Game\Scenes\SceneManager.cs" />
     <Compile Include="Game\Serial.cs" />
     <Compile Include="Game\GameObjects\Views\AnimatedEffectView.cs" />
     <Compile Include="Game\GameObjects\Views\ItemView.cs" />
