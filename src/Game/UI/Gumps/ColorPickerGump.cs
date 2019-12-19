@@ -35,10 +35,10 @@ namespace ClassicUO.Game.UI.Gumps
         private readonly ColorPickerBox _box;
         private readonly StaticPic _dyeTybeImage;
 
-        private readonly Graphic _graphic;
+        private readonly ushort _graphic;
         private readonly Action<ushort> _okClicked;
 
-        public ColorPickerGump(Serial serial, ushort graphic, int x, int y, Action<ushort> okClicked) : base(serial, 0)
+        public ColorPickerGump(uint serial, ushort graphic, int x, int y, Action<ushort> okClicked) : base(serial, 0)
         {
             _graphic = graphic;
             CanMove = true;

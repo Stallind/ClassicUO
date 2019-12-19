@@ -55,7 +55,7 @@ namespace ClassicUO.Game.GameObjects
 
         }
 
-        public Multi(Graphic graphic)
+        public Multi(ushort graphic)
         {
             Graphic = _originalGraphic = graphic;
             UpdateGraphicBySeason();
@@ -71,7 +71,7 @@ namespace ClassicUO.Game.GameObjects
                 _canBeTransparent = 0;
         }
 
-        public static Multi Create(Graphic graphic)
+        public static Multi Create(ushort graphic)
         {
             if (_pool.Count != 0)
             {
@@ -111,12 +111,14 @@ namespace ClassicUO.Game.GameObjects
         public int MultiOffsetZ;
         public CUSTOM_HOUSE_MULTI_OBJECT_FLAGS State = 0;
         public bool IsCustom;
+        public bool IsVegetation;
 
         public ref readonly StaticTiles ItemData => ref UOFileManager.TileData.StaticData[Graphic];
 
         public override void UpdateGraphicBySeason()
         {
             Graphic = Season.GetSeasonGraphic(World.Season, _originalGraphic);
+            IsVegetation = StaticFilters.IsVegetation(Graphic);
         }
 
         public override void UpdateTextCoordsV()

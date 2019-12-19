@@ -132,7 +132,7 @@ namespace ClassicUO.Game.UI.Controls
 
         public int SpecialHeight { get; set; }
 
-        public Hue Hue
+        public ushort Hue
         {
             get => _gumpTop.Hue;
             set => _gumpTop.Hue = _gumpBottom.Hue = _gumpMiddle.Hue = _gumpRight.Hue = value;
@@ -196,7 +196,7 @@ namespace ClassicUO.Game.UI.Controls
                 _gumplingTitleGumpIDDelta = false;
 
                 _gumplingTitle?.Dispose();
-                Add(_gumplingTitle = new GumpPic(0, 0, (Graphic) _gumplingTitleGumpID, 0));
+                Add(_gumplingTitle = new GumpPic(0, 0, (ushort) _gumplingTitleGumpID, 0));
             }
 
             if (!_gumpTop.IsInitialized)

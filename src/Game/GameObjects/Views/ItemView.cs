@@ -38,7 +38,7 @@ namespace ClassicUO.Game.GameObjects
     internal partial class Item
     {
         private bool _force;
-        private Graphic _originalGraphic;
+        private ushort _originalGraphic;
 
 
         public override bool Draw(UltimaBatcher2D batcher, int posX, int posY)
@@ -56,7 +56,7 @@ namespace ClassicUO.Game.GameObjects
 
             ushort hue = Hue;
 
-            if (ProfileManager.Current.FieldsType == 1 && StaticsHelper.IsField(Graphic)) // static
+            if (ProfileManager.Current.FieldsType == 1 && StaticFilters.IsField(Graphic)) // static
             {
                 unsafe
                 {
@@ -68,7 +68,7 @@ namespace ClassicUO.Game.GameObjects
 
                         if (animData->FrameCount != 0)
                         {
-                            _originalGraphic = (Graphic) (Graphic + animData->FrameData[animData->FrameCount >> 1]);
+                            _originalGraphic = (ushort) (Graphic + animData->FrameData[animData->FrameCount >> 1]);
                         }
                     }
                 }
@@ -77,27 +77,27 @@ namespace ClassicUO.Game.GameObjects
             }
             else if (ProfileManager.Current.FieldsType == 2)
             {
-                if (StaticsHelper.IsFireField(Graphic))
+                if (StaticFilters.IsFireField(Graphic))
                 {
                     _originalGraphic = Constants.FIELD_REPLACE_GRAPHIC;
                     hue = 0x0020;
                 }
-                else if (StaticsHelper.IsParalyzeField(Graphic))
+                else if (StaticFilters.IsParalyzeField(Graphic))
                 {
                     _originalGraphic = Constants.FIELD_REPLACE_GRAPHIC;
                     hue = 0x0058;
                 }
-                else if (StaticsHelper.IsEnergyField(Graphic))
+                else if (StaticFilters.IsEnergyField(Graphic))
                 {
                     _originalGraphic = Constants.FIELD_REPLACE_GRAPHIC;
                     hue = 0x0070;
                 }
-                else if (StaticsHelper.IsPoisonField(Graphic))
+                else if (StaticFilters.IsPoisonField(Graphic))
                 {
                     _originalGraphic = Constants.FIELD_REPLACE_GRAPHIC;
                     hue = 0x0044;
                 }
-                else if (StaticsHelper.IsWallOfStone(Graphic))
+                else if (StaticFilters.IsWallOfStone(Graphic))
                 {
                     _originalGraphic = Constants.FIELD_REPLACE_GRAPHIC;
                     hue = 0x038A;
@@ -159,7 +159,7 @@ namespace ClassicUO.Game.GameObjects
                       .AddLight(this, this, posX + 22, posY + 22);
             }
 
-            if (!Serial.IsValid && IsMulti && TargetManager.TargetingState == CursorTarget.MultiPlacement)
+            if (!SerialHelper.IsValid(Serial) && IsMulti && TargetManager.TargetingState == CursorTarget.MultiPlacement)
                 HueVector.Z = 0.5f;
 
             return base.Draw(batcher, posX, posY);
@@ -334,7 +334,7 @@ namespace ClassicUO.Game.GameObjects
 
         public override void Select(int x, int y)
         {
-            if (!Serial.IsValid /*&& IsMulti*/ && TargetManager.TargetingState == CursorTarget.MultiPlacement)
+            if (! SerialHelper.IsValid(Serial) /*&& IsMulti*/ && TargetManager.TargetingState == CursorTarget.MultiPlacement)
                 return;
 
             if (SelectedObject.Object == this)

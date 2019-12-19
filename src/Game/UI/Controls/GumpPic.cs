@@ -42,7 +42,7 @@ namespace ClassicUO.Game.UI.Controls
             AcceptMouseInput = true;
         }
 
-        public Graphic Graphic
+        public ushort Graphic
         {
             get => _graphic;
             set
@@ -62,7 +62,7 @@ namespace ClassicUO.Game.UI.Controls
             }
         }
 
-        public Hue Hue { get; set; }
+        public ushort Hue { get; set; }
 
 
         public override void Update(double totalMS, double frameMS)
@@ -99,7 +99,7 @@ namespace ClassicUO.Game.UI.Controls
 
     internal class GumpPic : GumpPicBase
     {
-        public GumpPic(int x, int y, Graphic graphic, Hue hue)
+        public GumpPic(int x, int y, ushort graphic, ushort hue)
         {
             X = x;
             Y = y;
@@ -115,11 +115,11 @@ namespace ClassicUO.Game.UI.Controls
             }
         }
 
-        public GumpPic(List<string> parts) : this(int.Parse(parts[1]), int.Parse(parts[2]), Graphic.Parse(parts[3]), (ushort) (parts.Count > 4 ? TransformHue((ushort) (Hue.Parse(parts[4].Substring(parts[4].IndexOf('=') + 1)) + 1)) : 0))
+        public GumpPic(List<string> parts) : this(int.Parse(parts[1]), int.Parse(parts[2]), UInt16Converter.Parse(parts[3]), (ushort) (parts.Count > 4 ? TransformHue((ushort) (UInt16Converter.Parse(parts[4].Substring(parts[4].IndexOf('=') + 1)) + 1)) : 0))
         {
         }
 
-        public GumpPic(int x, int y, UOTexture texture, Hue hue)
+        public GumpPic(int x, int y, UOTexture texture, ushort hue)
         {
             X = x;
             Y = y;
@@ -146,7 +146,7 @@ namespace ClassicUO.Game.UI.Controls
         {
             if (IsVirtue && button == MouseButton.Left)
             {
-                NetClient.Socket.Send(new PVirtueGumpReponse(World.Player, Graphic.Value));
+                NetClient.Socket.Send(new PVirtueGumpReponse(World.Player, Graphic));
 
                 return false;
             }

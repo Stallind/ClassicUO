@@ -245,7 +245,7 @@ namespace ClassicUO.Game.UI.Gumps.CharCreation
 
         internal class MapInfo
         {
-            public MapInfo(int mapIndex, string name, Graphic gump, int width, int widthOffset, int height, int heightOffset)
+            public MapInfo(int mapIndex, string name, ushort gump, int width, int widthOffset, int height, int heightOffset)
             {
                 Index = mapIndex;
                 Name = name;
@@ -260,7 +260,7 @@ namespace ClassicUO.Game.UI.Gumps.CharCreation
 
             public int Index { get; set; }
             public string Name { get; set; }
-            public Graphic Gump { get; set; }
+            public ushort Gump { get; set; }
 
             public int Width { get; set; }
             public int Height { get; set; }
@@ -321,8 +321,8 @@ namespace ClassicUO.Game.UI.Gumps.CharCreation
                 {
                     var city = cities[i];
 
-                    var buttonX = city.IsNewCity ? (city.Position.X - _mapInfo.WidthOffset) * width / mapWidth : city.Position.X - 62;
-                    var buttonY = city.IsNewCity ? (city.Position.Y - _mapInfo.HeightOffset) * height / mapHeight : city.Position.Y - 54;
+                    var buttonX = city.IsNewCity ? (city.X - _mapInfo.WidthOffset) * width / mapWidth : city.X - 62;
+                    var buttonY = city.IsNewCity ? (city.Y - _mapInfo.HeightOffset) * height / mapHeight : city.Y - 54;
 
                     var button = new Button(city.Index, 1209, 1210, 1210)
                     {

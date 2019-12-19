@@ -32,12 +32,13 @@ namespace ClassicUO.Game
     internal class ItemHold
     {
         public bool OnGround { get; private set; }
-        public Position Position { get; private set; }
-        public Serial Container { get; private set; }
-        public Serial Serial { get; private set; }
-        public Graphic Graphic { get; private set; }
-        public Graphic DisplayedGraphic { get; private set; }
-        public Hue Hue { get; private set; }
+        public ushort X, Y;
+        public sbyte Z;
+        public uint Container { get; private set; }
+        public uint Serial { get; private set; }
+        public ushort Graphic { get; private set; }
+        public ushort DisplayedGraphic { get; private set; }
+        public ushort Hue { get; private set; }
         public ushort Amount { get; private set; }
         public bool IsStackable { get; private set; }
         public bool IsPartialHue { get; private set; }
@@ -56,7 +57,9 @@ namespace ClassicUO.Game
             Serial = item.Serial;
             Graphic = item.Graphic;
             DisplayedGraphic = item.IsCoin && amount == 1 ? item.Graphic : item.DisplayedGraphic;
-            Position = item.Position;
+            X = item.X;
+            Y = item.Y;
+            Z = item.Z;
             OnGround = item.OnGround;
             Container = item.Container;
             Hue = item.Hue;
@@ -71,11 +74,13 @@ namespace ClassicUO.Game
 
         public void Clear()
         {
-            Serial = Serial.INVALID;
-            Position = Position.INVALID;
-            Container = Serial.INVALID;
-            DisplayedGraphic = Graphic = Graphic.INVALID;
-            Hue = Hue.INVALID;
+            Serial = 0;
+            X = 0xFFFF;
+            Y = 0xFFFF;
+            Z = 0;
+            Container = 0;
+            DisplayedGraphic = Graphic = 0xFFFF;
+            Hue = 0xFFFF;
             OnGround = false;
             Amount = 0;
             IsWearable = IsStackable = IsPartialHue = HasAlpha = false;

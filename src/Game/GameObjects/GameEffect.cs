@@ -58,7 +58,7 @@ namespace ClassicUO.Game.GameObjects
 
         public bool IsEnabled;
 
-        public Graphic AnimationGraphic = Graphic.INVALID;
+        public ushort AnimationGraphic = 0xFFFF;
 
         public bool IsMoving => Target != null || TargetX != 0 && TargetY != 0;
 
@@ -114,7 +114,7 @@ namespace ClassicUO.Game.GameObjects
                     {
                         unsafe
                         {
-                            AnimationGraphic = (Graphic) (Graphic + AnimDataFrame.FrameData[AnimIndex]);
+                            AnimationGraphic = (ushort) (Graphic + AnimDataFrame.FrameData[AnimIndex]);
                         }
 
                         AnimIndex++;
@@ -148,14 +148,20 @@ namespace ClassicUO.Game.GameObjects
         public void SetSource(GameObject source)
         {
             Source = source;
-            Position = source.Position;
+            X = source.X;
+            Y = source.Y;
+            Z = source.Z;
+            UpdateScreenPosition();
             AddToTile();
         }
 
         public void SetSource(int x, int y, int z)
         {
             Source = null;
-            Position = new Position((ushort) x, (ushort) y, (sbyte) z);
+            X = (ushort) x;
+            Y = (ushort) y;
+            Z = (sbyte) z;
+            UpdateScreenPosition();
             AddToTile();
         }
 

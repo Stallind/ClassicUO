@@ -51,11 +51,10 @@ namespace ClassicUO.Game.GameObjects
 
         }
 
-        public Static(Graphic graphic, Hue hue, int index)
+        public Static(ushort graphic, ushort hue, int index)
         {
             Graphic = OriginalGraphic = graphic;
             Hue = hue;
-            Index = index;
 
             UpdateGraphicBySeason();
 
@@ -69,14 +68,13 @@ namespace ClassicUO.Game.GameObjects
                 _canBeTransparent = 0;
         }
 
-        public static Static Create(Graphic graphic, Hue hue, int index)
+        public static Static Create(ushort graphic, ushort hue, int index)
         {
             if (_pool.Count != 0)
             {
                 var s = _pool.Dequeue();
                 s.Graphic = s.OriginalGraphic = graphic;
                 s.Hue = hue;
-                s.Index = index;
                 s.IsDestroyed = false;
                 s.AlphaHue = 0;
                 s.FoliageIndex = 0;
@@ -97,15 +95,15 @@ namespace ClassicUO.Game.GameObjects
             return new Static(graphic, hue, index);
         }
 
-        public int Index { get; private set; }
-
         public string Name => ItemData.Name;
 
-        public Graphic OriginalGraphic { get; private set; }
+        public ushort OriginalGraphic { get; private set; }
+
+        public bool IsVegetation;
 
         public ref readonly StaticTiles ItemData => ref UOFileManager.TileData.StaticData[Graphic];
 
-        public void SetGraphic(Graphic g)
+        public void SetGraphic(ushort g)
         {
             Graphic = g;
             SetTextureByGraphic(g);
@@ -122,7 +120,7 @@ namespace ClassicUO.Game.GameObjects
             SetGraphic(Season.GetSeasonGraphic(World.Season, OriginalGraphic));
             AllowedToDraw = !GameObjectHelper.IsNoDrawable(Graphic);
             SetTextureByGraphic(Graphic);
-
+            IsVegetation = StaticFilters.IsVegetation(Graphic);
         }
 
         public override void UpdateTextCoordsV()

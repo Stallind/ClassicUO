@@ -48,10 +48,10 @@ namespace ClassicUO.Game.Scenes
         {
             if (HeldItem.Enabled && HeldItem.Serial != container)
             {
-                if (container.Serial.IsMobile)
+                if (SerialHelper.IsMobile(container.Serial))
                     GameActions.DropItem(HeldItem.Serial, 0xFFFF, 0xFFFF, 0, container.Serial);
-                else if (container.Serial.IsItem)
-                    GameActions.DropItem(HeldItem.Serial, container.Position.X, container.Position.Y, container.Position.Z, container.Serial);
+                else if (SerialHelper.IsItem(container.Serial))
+                    GameActions.DropItem(HeldItem.Serial, container.X, container.Y, container.Z, container.Serial);
 
                 HeldItem.Enabled = false;
                 HeldItem.Dropped = true;
@@ -123,22 +123,17 @@ namespace ClassicUO.Game.Scenes
         {
             UIManager.Remove<Gump>(item);
 
-            if (item.Container.IsValid)
+            if (SerialHelper.IsValid(item.Container))
             {
                 foreach (Item i in item.Items)
                     CloseItemGumps(i);
             }
         }
 
-        public void DropHeldItemToWorld(Position position)
-        {
-            DropHeldItemToWorld(position.X, position.Y, position.Z);
-        }
-
         public void DropHeldItemToWorld(int x, int y, sbyte z)
         {
             GameObject obj = SelectedObject.Object as GameObject;
-            Serial serial;
+            uint serial;
 
             if (obj is Item item && item.ItemData.IsContainer)
             {
@@ -147,7 +142,7 @@ namespace ClassicUO.Game.Scenes
                 z = 0;
             }
             else
-                serial = Serial.MINUS_ONE;
+                serial = 0xFFFF_FFFF;
 
             if (HeldItem.Enabled && HeldItem.Serial != serial)
             {

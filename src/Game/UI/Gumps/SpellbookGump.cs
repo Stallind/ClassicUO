@@ -48,7 +48,7 @@ namespace ClassicUO.Game.UI.Gumps
         private SpellBookType _spellBookType;
         private DataBox _dataBox;
 
-        public SpellbookGump(Serial item) : this()
+        public SpellbookGump(uint item) : this()
         {
             LocalSerial = item;
           
@@ -66,7 +66,7 @@ namespace ClassicUO.Game.UI.Gumps
                 {
                     _isMinimized = value;
 
-                    GetBookInfo(_spellBookType, out Graphic bookGraphic, out Graphic minimizedGraphic, out Graphic iconStartGraphic, out int maxSpellsCount, out int spellsOnPage, out int dictionaryPagesCount);
+                    GetBookInfo(_spellBookType, out ushort bookGraphic, out ushort minimizedGraphic, out ushort iconStartGraphic, out int maxSpellsCount, out int spellsOnPage, out int dictionaryPagesCount);
 
 
                     _picBase.Graphic = value ? minimizedGraphic : bookGraphic;
@@ -133,7 +133,7 @@ namespace ClassicUO.Game.UI.Gumps
             item.Items.Removed += ItemsOnRemoved;
 
             AssignGraphic(item);
-            GetBookInfo(_spellBookType, out Graphic bookGraphic, out Graphic minimizedGraphic, out Graphic iconStartGraphic, out int maxSpellsCount, out int spellsOnPage, out int dictionaryPagesCount);
+            GetBookInfo(_spellBookType, out ushort bookGraphic, out ushort minimizedGraphic, out ushort iconStartGraphic, out int maxSpellsCount, out int spellsOnPage, out int dictionaryPagesCount);
             Add(_picBase = new GumpPic(0, 0, bookGraphic, 0));
             _picBase.MouseDoubleClick += _picBase_MouseDoubleClick;
 
@@ -202,12 +202,12 @@ namespace ClassicUO.Game.UI.Gumps
             base.Dispose();
         }
 
-        private void ItemsOnRemoved(object sender, CollectionChangedEventArgs<Serial> e)
+        private void ItemsOnRemoved(object sender, CollectionChangedEventArgs<uint> e)
         {
             Update();
         }
 
-        private void ItemsOnAdded(object sender, CollectionChangedEventArgs<Serial> e)
+        private void ItemsOnAdded(object sender, CollectionChangedEventArgs<uint> e)
         {
             Update();
         }
@@ -217,7 +217,7 @@ namespace ClassicUO.Game.UI.Gumps
             _dataBox.Clear();
             _dataBox.WantUpdateSize = true;
 
-            GetBookInfo(_spellBookType, out Graphic bookGraphic, out Graphic minimizedGraphic, out Graphic iconStartGraphic, out int maxSpellsCount, out int spellsOnPage, out int dictionaryPagesCount);
+            GetBookInfo(_spellBookType, out ushort bookGraphic, out ushort minimizedGraphic, out ushort iconStartGraphic, out int maxSpellsCount, out int spellsOnPage, out int dictionaryPagesCount);
 
             int totalSpells = 0;
 
@@ -562,7 +562,7 @@ namespace ClassicUO.Game.UI.Gumps
                 }
                 else
                 {
-                    iconGraphic = (Graphic) (iconStartGraphic + i);
+                    iconGraphic = (ushort) (iconStartGraphic + i);
                     GetSpellToolTip(out toolTipCliloc);
                 }
 
@@ -646,7 +646,7 @@ namespace ClassicUO.Game.UI.Gumps
 
         private SpellDefinition GetSpellDefinition(Control ctrl)
         {
-            int idx = (int) (ctrl.LocalSerial > 1000 ? ctrl.LocalSerial - 1000 : ctrl.LocalSerial >= 100 ? ctrl.LocalSerial - 100 : ctrl.LocalSerial.Value) + 1;
+            int idx = (int) (ctrl.LocalSerial > 1000 ? ctrl.LocalSerial - 1000 : ctrl.LocalSerial >= 100 ? ctrl.LocalSerial - 100 : ctrl.LocalSerial) + 1;
 
             return GetSpellDefinition(idx);
         }
@@ -701,7 +701,7 @@ namespace ClassicUO.Game.UI.Gumps
             return def;
         }
 
-        private void GetBookInfo(SpellBookType type, out Graphic bookGraphic, out Graphic minimizedGraphic, out Graphic iconStartGraphic, out int maxSpellsCount, out int spellsOnPage, out int dictionaryPagesCount)
+        private void GetBookInfo(SpellBookType type, out ushort bookGraphic, out ushort minimizedGraphic, out ushort iconStartGraphic, out int maxSpellsCount, out int spellsOnPage, out int dictionaryPagesCount)
         {
             switch (type)
             {
@@ -1019,7 +1019,7 @@ namespace ClassicUO.Game.UI.Gumps
                 if (_clickTiming <= 0)
                 {
                     _clickTiming = 0;
-                    SetActivePage((int) _lastPressed.LocalSerial.Value);
+                    SetActivePage((int) _lastPressed.LocalSerial);
                     _lastPressed = null;
                 }
             }

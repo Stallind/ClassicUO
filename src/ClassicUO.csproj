@@ -137,7 +137,7 @@
     <Compile Include="Game\Data\SpellsNecromancy.cs" />
     <Compile Include="Game\Data\SpellsNinjitsu.cs" />
     <Compile Include="Game\Data\SpellsSpellweaving.cs" />
-    <Compile Include="Game\Data\StaticsHelper.cs" />
+    <Compile Include="Game\Data\StaticFilters.cs" />
     <Compile Include="Game\GameObjects\DragEffect.cs" />
     <Compile Include="Game\GameObjects\Land.cs" />
     <Compile Include="Game\GameObjects\EntityTextContainer.cs" />
@@ -384,7 +384,7 @@
     <Compile Include="Game\GameObjects\Multi.cs" />
     <Compile Include="Game\GameObjects\PlayerMobile.cs" />
     <Compile Include="Game\GameObjects\Static.cs" />
-    <Compile Include="Game\Graphic.cs" />
+    <Compile Include="Utility\UInt16Converter.cs" />
     <Compile Include="Game\UI\Controls\Button.cs" />
     <Compile Include="Game\UI\Controls\Checkbox.cs" />
     <Compile Include="Game\UI\Controls\CheckerTrans.cs" />
@@ -426,16 +426,14 @@
     <Compile Include="Game\UI\Controls\WorldViewport.cs" />
     <Compile Include="Game\UI\Gumps\WorldViewportGump.cs" />
     <Compile Include="Game\Managers\UIManager.cs" />
-    <Compile Include="Game\Hue.cs" />
     <Compile Include="Game\Map\Map.cs" />
     <Compile Include="Game\Map\Chunk.cs" />
     <Compile Include="Game\Map\Tile.cs" />
     <Compile Include="Game\Pathfinder.cs" />
-    <Compile Include="Game\Position.cs" />
     <Compile Include="Game\Scenes\GameScene.cs" />
     <Compile Include="Game\Scenes\LoginScene.cs" />
     <Compile Include="Game\Scenes\Scene.cs" />
-    <Compile Include="Game\Serial.cs" />
+    <Compile Include="Game\SerialHelper.cs" />
     <Compile Include="Game\GameObjects\Views\AnimatedEffectView.cs" />
     <Compile Include="Game\GameObjects\Views\ItemView.cs" />
     <Compile Include="Game\Data\LayerOrder.cs" />
@@ -511,7 +509,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <None Include="README.md" />
     <None Include="shaders\compile_shaders.bat" />
     <None Include="shaders\IsometricWorld.fx" />
     <EmbeddedResource Include="shaders\IsometricWorld.fxc" />

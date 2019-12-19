@@ -42,9 +42,9 @@ namespace ClassicUO.Game.GameObjects
 {
     internal class PlayerMobile : Mobile
     {
-        private readonly Dictionary<Graphic, BuffIcon> _buffIcons = new Dictionary<Graphic, BuffIcon>();
+        private readonly Dictionary<ushort, BuffIcon> _buffIcons = new Dictionary<ushort, BuffIcon>();
 
-        public PlayerMobile(Serial serial) : base(serial)
+        public PlayerMobile(uint serial) : base(serial)
         {
             Skills = new Skill[UOFileManager.Skills.SkillsCount];
 
@@ -63,7 +63,7 @@ namespace ClassicUO.Game.GameObjects
         public Deque<Step> RequestedSteps { get; } = new Deque<Step>();
 #endif
 
-        public IReadOnlyDictionary<Graphic, BuffIcon> BuffIcons => _buffIcons;
+        public IReadOnlyDictionary<ushort, BuffIcon> BuffIcons => _buffIcons;
 
         public ushort Strength;
 
@@ -229,18 +229,18 @@ namespace ClassicUO.Game.GameObjects
             return found;
         }
 
-        public void AddBuff(Graphic graphic, uint time, string text)
+        public void AddBuff(ushort graphic, uint time, string text)
         {
             _buffIcons[graphic] = new BuffIcon(graphic, time, text);
         }
 
 
-        public bool IsBuffIconExists(Graphic graphic)
+        public bool IsBuffIconExists(ushort graphic)
         {
             return _buffIcons.ContainsKey(graphic);
         }
 
-        public void RemoveBuff(Graphic graphic)
+        public void RemoveBuff(ushort graphic)
         {
             _buffIcons.Remove(graphic);
         }
@@ -324,7 +324,7 @@ namespace ClassicUO.Game.GameObjects
 
                     for (int i = 0; i < count; i++)
                     {
-                        Graphic g = graphics[i];
+                        ushort g = graphics[i];
 
                         switch (g)
                         {
@@ -1295,7 +1295,7 @@ namespace ClassicUO.Game.GameObjects
 
                 if (World.Items.Any(s =>
                                         s.ItemData.IsDoor && s.X == x && s.Y == y && s.Z - 15 <= z &&
-                                        s.Position.Z + 15 >= z))
+                                        s.Z + 15 >= z))
                     GameActions.OpenDoor();
             }
         }
@@ -1337,7 +1337,7 @@ namespace ClassicUO.Game.GameObjects
                         int distance = int.MaxValue;
                         if (ent != null)
                         {
-                            if (ent.Serial.IsItem)
+                            if (SerialHelper.IsItem(ent.Serial))
                             {
                                 var top = World.Get(((Item)ent).RootContainer);
 
@@ -1358,7 +1358,7 @@ namespace ClassicUO.Game.GameObjects
                         distance = int.MaxValue;
                         if (ent != null)
                         {
-                            if (ent.Serial.IsItem)
+                            if (SerialHelper.IsItem(ent.Serial))
                             {
                                 var top = World.Get(((Item) ent).RootContainer);
 
@@ -1842,8 +1842,8 @@ namespace ClassicUO.Game.GameObjects
 #endif
         }
 
-        public readonly HashSet<Serial> AutoOpenedCorpses = new HashSet<Serial>();
-        public readonly HashSet<Serial> ManualOpenedCorpses = new HashSet<Serial>();
+        public readonly HashSet<uint> AutoOpenedCorpses = new HashSet<uint>();
+        public readonly HashSet<uint> ManualOpenedCorpses = new HashSet<uint>();
 #if JAEDAN_MOVEMENT_PATCH
         public override void ForcePosition(ushort x, ushort y, sbyte z, Direction dir)
         {

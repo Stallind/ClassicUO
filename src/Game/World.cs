@@ -53,7 +53,7 @@ namespace ClassicUO.Game
     internal static class World
     {
         private static readonly EffectManager _effectManager = new EffectManager();
-        private static readonly List<Serial> _toRemove = new List<Serial>();
+        private static readonly List<uint> _toRemove = new List<uint>();
 
         public static Point RangeSize;
 
@@ -111,16 +111,22 @@ namespace ClassicUO.Game
                     {
                         if (MapIndex >= 0) Map.Destroy();
 
-                        Position position = Player.Position;
+                        ushort x = Player.X;
+                        ushort y = Player.Y;
+                        sbyte z = Player.Z;
+
                         Map = null;
 
                         Map = new Map.Map(value)
                         {
-                            Center = new Point(position.X, position.Y)
+                            Center = new Point(x, y)
                         };
                         Map.Initialize();
 
-                        Player.Position = position;
+                        Player.X = x;
+                        Player.Y = y;
+                        Player.Z = z;
+                        Player.UpdateScreenPosition();
                         Player.AddToTile();
 
                         Player.ClearSteps();
@@ -240,21 +246,21 @@ namespace ClassicUO.Game
             }
         }
 
-        public static bool Contains(Serial serial)
+        public static bool Contains(uint serial)
         {
-            if (serial.IsItem) return Items.Contains(serial);
+            if (SerialHelper.IsItem(serial)) return Items.Contains(serial);
 
-            return serial.IsMobile && Mobiles.Contains(serial);
+            return SerialHelper.IsMobile(serial) && Mobiles.Contains(serial);
         }
 
-        public static Entity Get(Serial serial)
+        public static Entity Get(uint serial)
         {
-            if (serial.IsItem) return Items.Get(serial);
+            if (SerialHelper.IsItem(serial)) return Items.Get(serial);
 
-            return serial.IsMobile ? Mobiles.Get(serial) : null;
+            return SerialHelper.IsMobile(serial) ? Mobiles.Get(serial) : null;
         }
 
-        public static Item GetOrCreateItem(Serial serial)
+        public static Item GetOrCreateItem(uint serial)
         {
             Item item = Items.Get(serial);
 
@@ -267,7 +273,7 @@ namespace ClassicUO.Game
             return item;
         }
 
-        public static Mobile GetOrCreateMobile(Serial serial)
+        public static Mobile GetOrCreateMobile(uint serial)
         {
             Mobile mob = Mobiles.Get(serial);
 
@@ -280,7 +286,7 @@ namespace ClassicUO.Game
             return mob;
         }
 
-        public static bool RemoveItem(Serial serial, bool forceRemove = false)
+        public static bool RemoveItem(uint serial, bool forceRemove = false)
         {
             Item item = Items.Get(serial);
 
@@ -313,7 +319,7 @@ namespace ClassicUO.Game
             return true;
         }
 
-        public static bool RemoveMobile(Serial serial, bool forceRemove = false)
+        public static bool RemoveMobile(uint serial, bool forceRemove = false)
         {
             Mobile mobile = Mobiles.Get(serial);
 
@@ -337,12 +343,16 @@ namespace ClassicUO.Game
             _effectManager.Add(effect);
         }
 
-        public static void AddEffect(GraphicEffectType type, Serial source, Serial target, Graphic graphic, Hue hue, Position srcPos, Position targPos, byte speed, int duration, bool fixedDir, bool doesExplode, bool hasparticles, GraphicEffectBlendMode blendmode)
+        public static void AddEffect(GraphicEffectType type, uint source, uint target,
+                                     ushort graphic, ushort hue, 
+                                     ushort srcX, ushort srcY, sbyte srcZ,
+                                     ushort targetX, ushort targetY, sbyte targetZ,
+                                     byte speed, int duration, bool fixedDir, bool doesExplode, bool hasparticles, GraphicEffectBlendMode blendmode)
         {
-            _effectManager.Add(type, source, target, graphic, hue, srcPos, targPos, speed, duration, fixedDir, doesExplode, hasparticles, blendmode);
+            _effectManager.Add(type, source, target, graphic, hue, srcX, srcY, srcZ, targetX, targetY, targetZ, speed, duration, fixedDir, doesExplode, hasparticles, blendmode);
         }
 
-        public static Serial SearchObject(SCAN_TYPE_OBJECT scanType, SCAN_MODE_OBJECT scanMode)
+        public static uint SearchObject(SCAN_TYPE_OBJECT scanType, SCAN_MODE_OBJECT scanMode)
         {
             Entity first = null, selected = null;
             int distance = int.MaxValue;

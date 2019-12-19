@@ -42,7 +42,7 @@ namespace ClassicUO.IO.Resources
     internal class AnimationsLoader : UOFileLoader<AnimationFrameTexture>
     {
         private readonly Dictionary<ushort, byte> _animationSequenceReplacing = new Dictionary<ushort, byte>();
-        private readonly Dictionary<Graphic, Rectangle> _animDimensionCache = new Dictionary<Graphic, Rectangle>();
+        private readonly Dictionary<ushort, Rectangle> _animDimensionCache = new Dictionary<ushort, Rectangle>();
         private readonly AnimationGroup _empty = new AnimationGroup
         {
             Direction = new AnimationDirection[5]
@@ -1412,6 +1412,7 @@ namespace ClassicUO.IO.Resources
                         {
                             ushort val = palette[reader.ReadByte()];
 
+                            // FIXME: same of MUL ? Keep it as original for the moment
                             if (val != 0)
                                 data[block] = (ushort) (0x8000 | val);
                             else
@@ -1502,13 +1503,7 @@ namespace ClassicUO.IO.Resources
 
                     for (int k = 0; k < runLength; k++)
                     {
-                        ushort val = palette[reader.ReadByte()];
-
-                        if (val != 0)
-                            data[block] = (ushort) (0x8000 | val);
-                        else
-                            data[block] = 0;
-                        block++;
+                        data[block++] = (ushort) (0x8000 | palette[reader.ReadByte()]);
                     }
 
                     header = reader.ReadUInt();
@@ -1664,7 +1659,7 @@ namespace ClassicUO.IO.Resources
                 x = y = w = h = 0;
         }
 
-        public override void CleaUnusedResources()
+        public override void CleaUnusedResources(int maxCount)
         {
             int count = 0;
             long ticks = Time.Ticks - Constants.CLEAR_TEXTURES_DELAY;
@@ -1694,7 +1689,7 @@ namespace ClassicUO.IO.Resources
 
                     _usedTextures.RemoveAt(i--);
 
-                    if (++count >= Constants.MAX_ANIMATIONS_OBJECT_REMOVED_BY_GARBAGE_COLLECTOR)
+                    if (++count >= maxCount)
                         break;
                 }
             }
@@ -2052,7 +2047,7 @@ namespace ClassicUO.IO.Resources
         public uint Size;
     }
 
-    internal readonly struct EquipConvData
+    internal readonly struct EquipConvData : IEquatable<EquipConvData>
     {
         public EquipConvData(ushort graphic, ushort gump, ushort color)
         {
@@ -2064,5 +2059,21 @@ namespace ClassicUO.IO.Resources
         public readonly ushort Graphic;
         public readonly ushort Gump;
         public readonly ushort Color;
+
+
+        public override int GetHashCode()
+        {
+            return (Graphic, Gump, Color).GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is EquipConvData v && Equals(v);
+        }
+
+        public bool Equals(EquipConvData other)
+        {
+            return (Graphic, Gump, Color) == (other.Graphic, other.Gump, other.Color);
+        }
     }
 }

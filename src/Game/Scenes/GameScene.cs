@@ -117,7 +117,7 @@ namespace ClassicUO.Game.Scenes
         public bool UseLights => ProfileManager.Current != null && ProfileManager.Current.UseCustomLightLevel ? World.Light.Personal < World.Light.Overall : World.Light.RealPersonal < World.Light.RealOverall;
         public bool UseAltLights => ProfileManager.Current != null && ProfileManager.Current.UseAlternativeLights;
        
-        public void DoubleClickDelayed(Serial serial)
+        public void DoubleClickDelayed(uint serial)
         {
             _useItemQueue.Add(serial);
         }
@@ -211,13 +211,13 @@ namespace ClassicUO.Game.Scenes
             string name;
             string text;
 
-            Hue hue = e.Hue;
+            ushort hue = e.Hue;
 
             switch (e.Type)
             {
                 case MessageType.Regular:
 
-                    if (e.Parent == null || e.Parent.Serial == Serial.INVALID)
+                    if (e.Parent == null || !SerialHelper.IsValid(e.Parent.Serial))
                         name = "System";
                     else
                         name = e.Name;
@@ -594,7 +594,7 @@ namespace ClassicUO.Game.Scenes
                     MoveCharacterByKeyboardInput(true);
             }
 
-            if (_followingMode && _followingTarget.IsMobile && !Pathfinder.AutoWalking)
+            if (_followingMode && SerialHelper.IsMobile(_followingTarget) && !Pathfinder.AutoWalking)
             {
                 Mobile follow = World.Mobiles.Get(_followingTarget);
 
@@ -637,7 +637,7 @@ namespace ClassicUO.Game.Scenes
             if (TargetManager.IsTargeting && TargetManager.TargetingState == CursorTarget.MultiPlacement && World.CustomHouseManager == null && TargetManager.MultiTargetInfo != null)
             {
                 if (_multi == null)
-                    _multi = new Item(Serial.INVALID)
+                    _multi = new Item(0)
                     {
                         Graphic = TargetManager.MultiTargetInfo.Model,
                         Hue = TargetManager.MultiTargetInfo.Hue,
@@ -646,18 +646,36 @@ namespace ClassicUO.Game.Scenes
 
                 if (SelectedObject.Object is GameObject gobj)
                 {
-                    Position pos2 = gobj.Tile?.FirstNode?.Position ?? gobj.Position;
+                    ushort x, y;
+                    sbyte z;
 
-                    World.Map.GetMapZ(pos2.X, pos2.Y, out sbyte groundZ, out sbyte _);
+                    var o = gobj.Tile?.FirstNode;
+                    if (o != null)
+                    {
+                        x = o.X;
+                        y = o.Y;
+                        z = o.Z;
+                    }
+                    else
+                    {
+                        x = gobj.X;
+                        y = gobj.Y;
+                        z = gobj.Z;
+                    }
+
+                    World.Map.GetMapZ(x, y, out sbyte groundZ, out sbyte _);
 
                     if (gobj is Static st && st.ItemData.IsWet)
                         groundZ = gobj.Z;
 
-                    var pos = new Position(
-                                           (ushort) (pos2.X - TargetManager.MultiTargetInfo.XOff),
-                                           (ushort) (pos2.Y - TargetManager.MultiTargetInfo.YOff), (sbyte) (groundZ - TargetManager.MultiTargetInfo.ZOff));
+                    x = (ushort) (x - TargetManager.MultiTargetInfo.XOff);
+                    y = (ushort) (y - TargetManager.MultiTargetInfo.YOff);
+                    z = (sbyte) (groundZ - TargetManager.MultiTargetInfo.ZOff);
 
-                    _multi.Position = pos;
+                    _multi.X = x;
+                    _multi.Y = y;
+                    _multi.Z = z;
+                    _multi.UpdateScreenPosition();
                     _multi.CheckGraphicChange();
                     _multi.AddToTile();
                     World.HouseManager.TryGetHouse(_multi.Serial, out var house);
@@ -665,7 +683,10 @@ namespace ClassicUO.Game.Scenes
                     foreach (Multi s in house.Components)
                     {
                         s.IsFromTarget = true;
-                        s.Position = new Position((ushort) (_multi.X + s.MultiOffsetX), (ushort) (_multi.Y + s.MultiOffsetY), (sbyte) (_multi.Z + s.MultiOffsetZ));
+                        s.X = (ushort) (_multi.X + s.MultiOffsetX);
+                        s.Y = (ushort) (_multi.Y + s.MultiOffsetY);
+                        s.Z = (sbyte) (_multi.Z + s.MultiOffsetZ);
+                        s.UpdateScreenPosition();
                         s.AddToTile();
                     }
                 }

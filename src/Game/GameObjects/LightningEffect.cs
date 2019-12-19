@@ -25,7 +25,7 @@ namespace ClassicUO.Game.GameObjects
 {
     internal sealed partial class LightningEffect : GameEffect
     {
-        public LightningEffect(Hue hue)
+        public LightningEffect(ushort hue)
         {
             Graphic = 0x4E20;
             Hue = hue;
@@ -34,21 +34,21 @@ namespace ClassicUO.Game.GameObjects
             AnimIndex = 0;
         }
 
-        public LightningEffect(GameObject source, Hue hue) : this(hue)
+        public LightningEffect(GameObject source, ushort hue) : this(hue)
         {
             SetSource(source);
         }
 
-        public LightningEffect(int x, int y, int z, Hue hue) : this(hue)
+        public LightningEffect(int x, int y, int z, ushort hue) : this(hue)
         {
             SetSource(x, y, z);
         }
 
-        public LightningEffect(Serial src, int x, int y, int z, Hue hue) : this(hue)
+        public LightningEffect(uint src, int x, int y, int z, ushort hue) : this(hue)
         {
             Entity source = World.Get(src);
 
-            if (src.IsValid && source != null)
+            if (SerialHelper.IsValid(src) && source != null)
                 SetSource(source);
             else
                 SetSource(x, y, z);
@@ -65,7 +65,7 @@ namespace ClassicUO.Game.GameObjects
                     Destroy();
                 else
                 {
-                    AnimationGraphic = (Graphic) (Graphic + AnimIndex);
+                    AnimationGraphic = (ushort) (Graphic + AnimIndex);
 
                     if (LastChangeFrameTime < totalMS)
                     {
@@ -75,7 +75,14 @@ namespace ClassicUO.Game.GameObjects
 
                     (int x, int y, int z) = GetSource();
 
-                    if (Position.X != x || Position.Y != y || Position.Z != z) Position = new Position((ushort) x, (ushort) y, (sbyte) z);
+                    if (X != x || Y != y || Z != z)
+                    {
+                        X = (ushort) x;
+                        Y = (ushort) y;
+                        Z = (sbyte) z;
+                        UpdateScreenPosition();
+                        AddToTile();
+                    }
                 }
             }
         }

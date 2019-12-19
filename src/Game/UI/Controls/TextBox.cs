@@ -53,13 +53,13 @@ namespace ClassicUO.Game.UI.Controls
             Font = font;
         }
 
-        public TextBox(List<string> parts, string[] lines) : this(1, parts[0] == "textentrylimited" ? int.Parse(parts[8]) : byte.MaxValue, 0, int.Parse(parts[3]), style: FontStyle.BlackBorder | FontStyle.CropTexture, hue: (Hue)(Hue.Parse(parts[5]) + 1))
+        public TextBox(List<string> parts, string[] lines) : this(1, parts[0] == "textentrylimited" ? int.Parse(parts[8]) : byte.MaxValue, 0, int.Parse(parts[3]), style: FontStyle.BlackBorder | FontStyle.CropTexture, hue: (ushort) (UInt16Converter.Parse(parts[5]) + 1))
         {
             X = int.Parse(parts[1]);
             Y = int.Parse(parts[2]);
             Width = int.Parse(parts[3]);
             Height = int.Parse(parts[4]);
-            LocalSerial = Serial.Parse(parts[6]);
+            LocalSerial = SerialHelper.Parse(parts[6]);
             TxEntry.SetHeight(Height);
 
             int index = int.Parse(parts[7]);
@@ -72,7 +72,7 @@ namespace ClassicUO.Game.UI.Controls
 
         public bool IsChanged => TxEntry.IsChanged;
 
-        public Hue Hue
+        public ushort Hue
         {
             get => TxEntry.Hue;
             set => TxEntry.Hue = value;

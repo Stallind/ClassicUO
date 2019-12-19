@@ -21,46 +21,35 @@
 
 #endregion
 
-using Microsoft.Xna.Framework.Input;
+using System;
+using System.Globalization;
+using System.Runtime.CompilerServices;
 
-using Mouse = ClassicUO.Input.Mouse;
-
-namespace ClassicUO.Game.UI.Controls
+namespace ClassicUO.Game
 {
-    internal class DataBox : Control
+    static class SerialHelper
     {
-        public DataBox(int x, int y, int w, int h)
+        [MethodImpl(256)]
+        public static bool IsValid(uint serial) => serial > 0 && serial < 0x80000000;
+
+        [MethodImpl(256)]
+        public static bool IsMobile(uint serial) => serial > 0 && serial < 0x40000000;
+
+        [MethodImpl(256)]
+        public static bool IsItem(uint serial) => serial >= 0x40000000 && serial < 0x80000000;
+
+        [MethodImpl(256)]
+        public static bool IsValidLocalGumpSerial(uint serial) => serial >= Constants.JOURNAL_LOCALSERIAL && serial < 0xFFFF_FFFF;
+
+        public static uint Parse(string str)
         {
-            CanMove = false;
-            AcceptMouseInput = true;
-            X = x;
-            Y = y;
-            Width = w;
-            Height = h;
-            WantUpdateSize = false;
-        }
+            if (str.StartsWith("0x"))
+                return uint.Parse(str.Remove(0, 2), NumberStyles.HexNumber);
 
-        public bool ContainsByBounds;
+            if (str.Length > 1 && str[0] == '-')
+                return (uint) int.Parse(str);
 
-
-        public override bool Contains(int x, int y)
-        {
-            if (ContainsByBounds)
-                return true;
-
-            Control t = null;
-            x += ScreenCoordinateX;
-            y += ScreenCoordinateY;
-
-            foreach (Control child in Children)
-            {
-                child.HitTest(x, y, ref t);
-
-                if (t != null)
-                    return true;
-            }
-
-            return false;
+            return uint.Parse(str);
         }
     }
 }

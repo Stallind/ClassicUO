@@ -30,16 +30,16 @@ using ClassicUO.Utility.Collections;
 
 namespace ClassicUO.Game.GameObjects
 {
-    internal sealed class House : IEquatable<Serial>
+    internal sealed class House : IEquatable<uint>
     {
-        public House(Serial serial, uint revision, bool isCustom)
+        public House(uint serial, uint revision, bool isCustom)
         {
             Serial = serial;
             Revision = revision;
             IsCustom = isCustom;
         }
 
-        public Serial Serial { get; }
+        public uint Serial { get; }
         public uint Revision;
         public List<Multi> Components { get; } = new List<Multi>();
         public bool IsCustom;
@@ -61,7 +61,10 @@ namespace ClassicUO.Game.GameObjects
 
             Multi m = Multi.Create(graphic);
             m.Hue = hue;
-            m.Position = new Position((ushort) (item.X + x), (ushort) (item.Y +  y), z);
+            m.X = (ushort) (item.X + x);
+            m.Y = (ushort) (item.Y + y);
+            m.Z = z;
+            m.UpdateScreenPosition();
             m.IsCustom = iscustom;
             m.AddToTile();
 
@@ -111,7 +114,7 @@ namespace ClassicUO.Game.GameObjects
             }
         }
 
-        public bool Equals(Serial other)
+        public bool Equals(uint other)
         {
             return Serial == other;
         }
@@ -139,7 +142,12 @@ namespace ClassicUO.Game.GameObjects
                 if (item != null)
                 {
                     if (recalculate)
-                        s.Position = new Position((ushort) (item.X + s.MultiOffsetX), (ushort) (item.Y + s.MultiOffsetY), (sbyte) (item.Z + s.MultiOffsetZ));
+                    {
+                        s.X = (ushort) (item.X + s.MultiOffsetX);
+                        s.Y = (ushort) (item.Y + s.MultiOffsetY);
+                        s.Z = (sbyte) (item.Z + s.MultiOffsetZ);
+                        s.UpdateScreenPosition();
+                    }
                     s.Hue = item.Hue;
                     //s.State = CUSTOM_HOUSE_MULTI_OBJECT_FLAGS.CHMOF_VALIDATED_PLACE;
                     //s.IsCustom = IsCustom;

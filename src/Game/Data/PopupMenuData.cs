@@ -27,7 +27,7 @@ namespace ClassicUO.Game.Data
 {
     internal class PopupMenuData
     {
-        public PopupMenuData(Serial serial, PopupMenuItem[] items)
+        public PopupMenuData(uint serial, PopupMenuItem[] items)
         {
             Serial = serial;
             Items = items;
@@ -35,7 +35,7 @@ namespace ClassicUO.Game.Data
 
         public PopupMenuItem[] Items { get; }
 
-        public Serial Serial { get; }
+        public uint Serial { get; }
 
         public PopupMenuItem this[int i] => Items[i];
 
@@ -43,13 +43,13 @@ namespace ClassicUO.Game.Data
         {
             ushort mode = p.ReadUShort();
             bool isNewCliloc = mode >= 2;
-            Serial serial = p.ReadUInt();
+            uint serial = p.ReadUInt();
             byte count = p.ReadByte();
             PopupMenuItem[] items = new PopupMenuItem[count];
 
             for (int i = 0; i < count; i++)
             {
-                Hue hue = 0xFFFF, replaced = 0;
+                ushort hue = 0xFFFF, replaced = 0;
                 int cliloc;
                 ushort index, flags;
 
@@ -72,7 +72,7 @@ namespace ClassicUO.Game.Data
                         p.Skip(2);
 
                     if ((flags & 0x20) != 0)
-                        replaced = (Hue) (p.ReadUShort() & 0x3FFF);
+                        replaced = (ushort) (p.ReadUShort() & 0x3FFF);
                 }
 
                 if ((flags & 0x01) != 0)

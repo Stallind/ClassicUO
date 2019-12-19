@@ -21,46 +21,23 @@
 
 #endregion
 
-using Microsoft.Xna.Framework.Input;
+using System;
+using System.Globalization;
 
-using Mouse = ClassicUO.Input.Mouse;
-
-namespace ClassicUO.Game.UI.Controls
+namespace ClassicUO.Game
 {
-    internal class DataBox : Control
-    {
-        public DataBox(int x, int y, int w, int h)
+    static class UInt16Converter
+    {     
+        public static ushort Parse(string str)
         {
-            CanMove = false;
-            AcceptMouseInput = true;
-            X = x;
-            Y = y;
-            Width = w;
-            Height = h;
-            WantUpdateSize = false;
-        }
+            if (str.StartsWith("0x"))
+                return ushort.Parse(str.Remove(0, 2), NumberStyles.HexNumber);
 
-        public bool ContainsByBounds;
+            if (str.Length > 1 && str[0] == '-')
+                return (ushort) short.Parse(str);
 
 
-        public override bool Contains(int x, int y)
-        {
-            if (ContainsByBounds)
-                return true;
-
-            Control t = null;
-            x += ScreenCoordinateX;
-            y += ScreenCoordinateY;
-
-            foreach (Control child in Children)
-            {
-                child.HitTest(x, y, ref t);
-
-                if (t != null)
-                    return true;
-            }
-
-            return false;
+            return (ushort) uint.Parse(str); // some server send 0xFFFF_FFFF in decimal form. C# doesn't like it. It needs a specific conversion
         }
     }
 }

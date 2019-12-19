@@ -43,25 +43,25 @@ namespace ClassicUO.Game.GameObjects
     internal partial class Item : Entity
     {
         private int _animSpeed;
-        private Graphic? _displayedGraphic;
+        private ushort? _displayedGraphic;
         private bool _isMulti;
 
 
         //private static readonly Queue<Item> _pool = new Queue<Item>();
 
-        public Item(Serial serial) : base(serial)
+        public Item(uint serial) : base(serial)
         {
         }
 
 
-        public static Item Create(Serial serial)
+        public static Item Create(uint serial)
         {
             //if (_pool.Count != 0)
             //{
             //    var i = _pool.Dequeue();
             //    i.IsDestroyed = false;
             //    i.Graphic = 0;
-            //    i.Serial = serial;
+            //    i.uint = serial;
             //    i._amount = 0;
             //    i._animDataFrame = default;
             //    i._animSpeed = 0;
@@ -115,13 +115,13 @@ namespace ClassicUO.Game.GameObjects
 
         public uint Price;
         public ushort Amount;
-        public Serial Container;
+        public uint Container;
         public Layer Layer;
         public bool UsedLayer;
 
         public bool IsCoin => Graphic >= 0x0EEA && Graphic <= 0x0EF2;
 
-        public Graphic DisplayedGraphic
+        public ushort DisplayedGraphic
         {
             get
             {
@@ -130,8 +130,8 @@ namespace ClassicUO.Game.GameObjects
 
                 if (IsCoin)
                 {
-                    if (Amount > 5) return (Graphic) (Graphic + 2);
-                    if (Amount > 1) return (Graphic) (Graphic + 1);
+                    if (Amount > 5) return (ushort) (Graphic + 2);
+                    if (Amount > 1) return (ushort) (Graphic + 1);
                 }
                 else if (IsMulti)
                     return MultiGraphic;
@@ -143,7 +143,7 @@ namespace ClassicUO.Game.GameObjects
 
         public bool IsLocked => (Flags & Flags.Movable) == 0 && ItemData.Weight > 90;
 
-        public Graphic MultiGraphic { get; private set; }
+        public ushort MultiGraphic { get; private set; }
 
         public bool IsMulti
         {
@@ -170,23 +170,23 @@ namespace ClassicUO.Game.GameObjects
 
         public bool IsCorpse => /*MathHelper.InRange(Graphic, 0x0ECA, 0x0ED2) ||*/ Graphic == 0x2006;
 
-        public bool OnGround => !Container.IsValid;
+        public bool OnGround => !SerialHelper.IsValid(Container);
 
-        public Serial RootContainer
+        public uint RootContainer
         {
             get
             {
                 Item item = this;
 
-                while (item.Container.IsItem)
+                while (SerialHelper.IsItem(item.Container))
                 {
                     item = World.Items.Get(item.Container);
 
                     if (item == null)
-                        return Serial.INVALID;
+                        return 0;
                 }
 
-                return item.Container.IsMobile ? item.Container : item;
+                return  SerialHelper.IsMobile( item.Container) ? item.Container : item;
             }
         }
 
@@ -230,7 +230,10 @@ namespace ClassicUO.Game.GameObjects
                 if (add)
                 {
                     Multi m = Multi.Create(graphic);
-                    m.Position = new Position((ushort) (X + x), (ushort) (Y + y), (sbyte) (Z + z));
+                    m.X = (ushort) (X + x);
+                    m.Y = (ushort) (Y + y);
+                    m.Z = (sbyte) (Z + z);
+                    m.UpdateScreenPosition();
                     m.MultiOffsetX = x;
                     m.MultiOffsetY = y;
                     m.MultiOffsetZ = z;
@@ -328,7 +331,7 @@ namespace ClassicUO.Game.GameObjects
             }
             else if (WantUpdateMulti)
             {
-                UoAssist.SignalAddMulti((ushort) (Graphic | 0x4000), Position);
+                UoAssist.SignalAddMulti((ushort) (Graphic | 0x4000), X, Y);
 
                 if (MultiDistanceBonus == 0 || World.HouseManager.IsHouseInRange(Serial, World.ClientViewRange))
                 {
@@ -349,9 +352,9 @@ namespace ClassicUO.Game.GameObjects
 
             ProcessAnimation(out _);
         }
-        public override Graphic GetGraphicForAnimation()
+        public override ushort GetGraphicForAnimation()
         {
-            Graphic graphic = Graphic;
+            ushort graphic = Graphic;
 
             if (Layer == Layer.Mount)
             {
@@ -883,7 +886,7 @@ namespace ClassicUO.Game.GameObjects
 
                         if (animData->FrameCount != 0)
                         {
-                            _originalGraphic = (Graphic) (DisplayedGraphic + animData->FrameData[AnimIndex++]);
+                            _originalGraphic = (ushort) (DisplayedGraphic + animData->FrameData[AnimIndex++]);
 
                             if (AnimIndex >= animData->FrameCount)
                                 AnimIndex = 0;

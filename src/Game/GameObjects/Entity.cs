@@ -32,12 +32,12 @@ using ClassicUO.Utility;
 
 namespace ClassicUO.Game.GameObjects
 {
-    internal abstract class Entity : GameObject
+    internal abstract class Entity : GameObject, IEquatable<Entity>
     {
         private Direction _direction;
         private Item[] _equipment;
 
-        protected Entity(Serial serial)
+        protected Entity(uint serial)
         {
             Serial = serial;
             Items = new EntityCollection<Item>();
@@ -58,7 +58,7 @@ namespace ClassicUO.Game.GameObjects
             set => _equipment = value;
         }
 
-        public Serial Serial;
+        public uint Serial;
         public bool IsClicked;
 
         public ushort Hits;
@@ -87,22 +87,22 @@ namespace ClassicUO.Game.GameObjects
         public bool Exists => World.Contains(Serial);
 
 
-        public void FixHue(Hue hue)
+        public void FixHue(ushort hue)
         {
-            ushort fixedColor = (ushort)(hue & 0x3FFF);
+            ushort fixedColor = (ushort) (hue & 0x3FFF);
 
             if (fixedColor != 0)
             {
                 if (fixedColor >= 0x0BB8)
                     fixedColor = 1;
-                fixedColor |= (ushort)(hue & 0xC000);
+                fixedColor |= (ushort) (hue & 0xC000);
             }
             else
-                fixedColor = (ushort)(hue & 0x8000);
+                fixedColor = (ushort) (hue & 0x8000);
 
             Hue = fixedColor;
         }
-      
+
         public override void Update(double totalMS, double frameMS)
         {
             base.Update(totalMS, frameMS);
@@ -138,7 +138,7 @@ namespace ClassicUO.Game.GameObjects
                         }
                     }
 
-                    if (i.Container.IsValid)
+                    if (SerialHelper.IsValid(i.Container))
                     {
                         Item found = i.FindItem(graphic, hue);
 
@@ -157,7 +157,7 @@ namespace ClassicUO.Game.GameObjects
                     if (i.Graphic == graphic && i.Hue == hue)
                         item = i;
 
-                    if (i.Container.IsValid)
+                    if (SerialHelper.IsValid(i.Container))
                     {
                         Item found = i.FindItem(graphic, hue);
 
@@ -193,23 +193,38 @@ namespace ClassicUO.Game.GameObjects
         }
 
 
-        public static implicit operator Serial(Entity entity)
-        {
-            return entity.Serial;
-        }
-
         public static implicit operator uint(Entity entity)
         {
             return entity.Serial;
         }
 
+        public static bool operator ==(Entity e, Entity s)
+        {
+            return Equals(e, s);
+        }
+
+        public static bool operator !=(Entity e, Entity s)
+        {
+            return !Equals(e, s);
+        }
+
+        public bool Equals(Entity e)
+        {
+            return Serial == e.Serial;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Entity ent && Equals(ent);
+        }
+
         public override int GetHashCode()
         {
-            return (int) Serial.Value;
+            return (int) Serial;
         }
 
         public abstract void ProcessAnimation(out byte dir, bool evalutate = false);
 
-        public abstract Graphic GetGraphicForAnimation();
+        public abstract ushort GetGraphicForAnimation();
     }
 }
